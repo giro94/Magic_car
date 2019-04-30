@@ -6,7 +6,6 @@ void setup()
   size(1500,1000);
   track = new Track();
   car = new Car(track.points[0]);
-  //frameRate(1);
 }
 
 void draw()
@@ -18,6 +17,9 @@ void draw()
     //track.generateTrack(track.N);
     track.Draw();
     car.Draw();
+    car.DrawSight();
+      text(frameRate,0,0);
+
   popMatrix();
   car.Move();
   car.commands();

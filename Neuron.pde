@@ -2,9 +2,14 @@ class Neuron{
   
   Link [] link;
   float value;
+  float [] pos;
+  float diameter = 30;
   
-  Neuron(){
+  Neuron(float pos_x, float pos_y){
     value = 0;
+    pos =  new float [2];
+    pos[0] = pos_x;
+    pos[1] = pos_y;
   }
   
   float sigmoid(float x){
@@ -28,11 +33,21 @@ class Neuron{
   float get_value(){
   
     return sigmoid(sum_all(link)); 
-  };
+  }
   
   void update(){
     value = get_value();
   }
   
+  void draw_neuron(float [] Position){
+    fill(0, 0, 255);
+    ellipse(Position[0], Position[1], diameter, diameter);
+  }
   
+  void draw_links(){
+    for ( Link v : link){
+      stroke(255, 0, 0);
+      line(pos[0], pos[1], v.in.pos[0], v.in.pos[1]);
+    }
+  }
 }

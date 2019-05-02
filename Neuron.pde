@@ -24,7 +24,7 @@ class Neuron {
 
   float sigmoid(float x) {
 
-    float f_sigmoid = 1/(1-exp(-x));
+    float f_sigmoid = 1/(1+exp(-x));
     return f_sigmoid;
   };
 
@@ -53,6 +53,14 @@ class Neuron {
     for(int i = 0; i<nLinks; i++)
     {
         link[i] = new Link(neuronsIn[i]);
+    }
+  }
+  
+  void setWeights(float[] weights)
+  {
+    for (int i=0; i<nLinks; i++)
+    {
+      link[i].weight = weights[i];
     }
   }
   

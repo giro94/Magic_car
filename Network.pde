@@ -12,34 +12,86 @@ class Network {
     neuronOut = new Neuron[no];
     neuronHid = new Neuron[nh];
 
-    for (Neuron n : neuronIn)
+    for (int i=0; i<neuronIn.length; i++)
     {
-      n = new Neuron(0);
+      neuronIn[i] = new Neuron(0);
     }
 
-    for (Neuron n : neuronHid)
+    for (int i=0; i<neuronHid.length; i++)
     {
-      n = new Neuron(ni);
-      n.linkTo(neuronIn);
+      neuronHid[i] = new Neuron(ni);
+      neuronHid[i].linkTo(neuronIn);
     } 
 
-    for (Neuron n : neuronOut)
+    for (int i=0; i<neuronOut.length; i++)
     {
-      n = new Neuron(nh);
-      n.linkTo(neuronHid);
+      neuronOut[i] = new Neuron(nh);
+      neuronOut[i].linkTo(neuronHid);
     }
     
     
   }
 
-  float[] getWeights()
+  void getWeights(Car car)
   {
-    float[] weights = car.weights;
-    return weights;
+    //print(car.weights.length);
+    print("getWeights, car has "+car.weights.length+" weights\n");
+    for (int i=0; i<nh; i++)
+    {
+      float[] ws = new float[ni];
+      for (int j=0; j<ni; j++)
+      {
+        ws[j] = car.weights[i*ni +j];
+      }
+      neuronHid[i].setWeights(ws);
+    }
+    
+    for (int i=0; i<no; i++)
+    {
+      float[] ws = new float[nh];
+      for (int j=0; j<nh; j++)
+      {
+        ws[j] = car.weights[ni*nh +i*nh +j];
+      }
+      neuronOut[i].setWeights(ws);
+    }
   }
 
-  float[] getInput()
+  void getInput(Car car)
   {
+    neuronIn[0].value = 1;
     
+    float[] sight = car.getSight();
+    
+    for (int i=0; i<car.Nlasers; i++)
+    {
+      neuronIn[i+1].value = sight[i];
+    }
+    
+    neuronIn[ni-1].value = car.speed;
+  }
+  
+  void propagate()
+  {
+    for (int i=0; i<nh; i++)
+      neuronHid[i].update();
+      
+    for (int i=0; i<no; i++)
+      neuronOut[i].update();
+  }
+  
+  void drive(Car car)
+  {
+    if (neuronOut[0].value > 0.5)
+      car.autopilot('w');
+    
+    if (neuronOut[1].value > 0.5)
+      car.autopilot('s');
+      
+    if (neuronOut[2].value > 0.5)
+      car.autopilot('a');
+      
+    if (neuronOut[3].value > 0.5)
+      car.autopilot('d');
   }
 }

@@ -14,10 +14,12 @@ class Car {
     pos[1] = Y;
     speed = 0;
     angle = 0;
-    for (float v : weights)
+    weights = new float[12*9+4*12];
+    for (int i=0; i<weights.length; i++)
     {
-       v = random(-1,1);
+      weights[i] = random(-1, 1);
     }
+    print("Costruisco car, con "+weights.length+" pesi\n");
   }
 
   Car(PVector v) {
@@ -26,9 +28,33 @@ class Car {
     pos[1] = v.y;
     speed = 0;
     angle = 0;
+    weights = new float[12*9+4*12];
+    for (int i=0; i<weights.length; i++)
+    {
+      weights[i] = random(-1, 1);
+    }
   } 
 
-
+  void autopilot(char action)
+  {
+    switch(action)
+    {
+    case 'w': 
+      speed += 0.4;
+      break;
+    case 's':
+      speed -= 0.1;
+      break;
+    case 'a':
+      angle -= 0.05;
+      break;
+    case 'd':        
+      angle += 0.05;
+      break;
+    default:
+    }
+    speed = constrain(speed, 0, 8);
+  }
 
   float commands() {
     if (keyPressed) {

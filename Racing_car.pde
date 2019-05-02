@@ -44,6 +44,6 @@ void mousePressed()
 {
   track.generateTrack(track.N);
   car = new Car(track.points[0]);
-  
+  ellipse(10,10,10,10);
   
 }

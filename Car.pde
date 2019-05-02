@@ -6,6 +6,7 @@ class Car {
   float MaxSight = 600;
   int Nlasers = 7;
   float angle_err = PI/36;
+  float[] weights;
 
   Car(float X, float Y) {
     pos = new float [2];
@@ -13,6 +14,10 @@ class Car {
     pos[1] = Y;
     speed = 0;
     angle = 0;
+    for (float v : weights)
+    {
+       v = random(-1,1);
+    }
   }
 
   Car(PVector v) {

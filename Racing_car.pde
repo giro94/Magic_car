@@ -1,5 +1,7 @@
 AI ai;
-
+boolean replay;
+float timer;
+float score;
 int Width_car = 800;
 int Height_car = 1000;
 int Width_net = 800;
@@ -9,30 +11,34 @@ void setup()
 {
   size(1600, 1000);
   ai = new AI();
+  replay = false;
 }
 
 void draw()
 {
-  background(255);
-  ai.newTrack();
-  ai.Race();
-  ai.Leaderboard();
-  ai.Evolve();
-  ai.Mutate();
+  if (!replay) {
+    ai.newTrack();
+    ai.Race();
+    ai.Leaderboard();
+    ai.Evolve();
+    ai.Mutate();
+    replay = true;
+    score = 1;
+    ai.net.getWeights(ai.cars[0]);
+    ai.track.reset_checkpoints();
+    ai.cars[0].reset(ai.track);
+    timer = 0;
+  } else {
 
-
-
-  float score = 1;
-  ai.net.getWeights(ai.cars[0]);
-  ai.track.reset_checkpoints();
-
-  float timer = 0;
-  while (ai.cars[0].is_alive() && timer < ai.Maxtime)
-  {
+    if (!(ai.cars[0].is_alive() && timer < ai.Maxtime)) {
+      replay = false;
+      return;
+    } 
     ai.net.getInput(ai.cars[0]);
     ai.net.propagate();
     ai.net.drive(ai.cars[0]);
     ai.cars[0].Move();
+    background(255);
     ai.Draw();
     fill(0);
     textSize(30);
@@ -42,12 +48,9 @@ void draw()
     if (check_score < 0)
     {
       score += 100;
-      break;
+      replay = false;
     }
     score += check_score;
     timer++;
   }
- 
-
-  
 }

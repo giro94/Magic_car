@@ -34,6 +34,7 @@ class AI
   {
     for (int i=0; i<Ncars; i++)
     {
+      print("Current competitor: car " + i + "\n");
       scores[i] = 1;
       net.getWeights(cars[i]);
       track.reset_checkpoints();
@@ -54,6 +55,7 @@ class AI
         scores[i] += check_score;
         timer++;
       }
+      if(scores[i] >= 2)
       scores[i] -= timer/Maxtime;
     }
   }
@@ -100,10 +102,9 @@ class AI
 
   void Draw()
   {
-    //TRACK + CAR
     pushMatrix();
     translate(Width_car/2, Height_car/2);
-    translate(-car_.pos[0], -car_.pos[1]);
+    translate(-cars[0].pos[0], -cars[0].pos[1]);
     //track.generateTrack(track.N);
     track.Draw();
     cars[0].DrawSight();

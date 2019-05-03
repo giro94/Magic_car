@@ -61,14 +61,14 @@ class Network {
   {
     neuronIn[0].value = 1;
     
-    float[] sight = car.getSight();
+    float[] sight = car.laser_normalized();
     
     for (int i=0; i<car.Nlasers; i++)
     {
       neuronIn[i+1].value = sight[i];
     }
     
-    neuronIn[ni-1].value = car.speed;
+    neuronIn[ni-1].value = car.speed/car.MaxSpeed;
   }
   
   void propagate()

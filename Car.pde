@@ -4,6 +4,7 @@ class Car {
   float angle;
   float radius = 15;
   float MaxSight = 600;
+  float MaxSpeed = 8;
   int Nlasers = 7;
   float angle_err = PI/36;
   float[] weights;
@@ -53,7 +54,7 @@ class Car {
       break;
     default:
     }
-    speed = constrain(speed, 0, 8);
+    speed = constrain(speed, 0, MaxSpeed);
   }
 
   float commands() {
@@ -152,6 +153,22 @@ class Car {
     }
     return lasers;
   }
+
+
+  float[] laser_normalized() {
+    float[]laser_normalized_ = new float[Nlasers];
+
+    for (int i = 0; i< getSight().length; i++) {
+      laser_normalized_[i] = getSight()[i] / MaxSight;
+    }
+    return laser_normalized_;
+  }
+
+
+
+
+
+
 
   void DrawSight()
   {

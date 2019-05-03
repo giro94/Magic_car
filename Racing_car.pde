@@ -34,7 +34,7 @@ void draw()
   if (!car_.is_alive(track))
   {
     track.generateTrack(track.N);
-    float speed_temp = car_.speed;
+    //float speed_temp = car_.speed;
     car_ = new Car(track.points[0]);
     //car_.speed = speed_temp;
   }

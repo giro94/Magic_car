@@ -14,18 +14,18 @@ class Network {
 
     for (int i=0; i<neuronIn.length; i++)
     {
-      neuronIn[i] = new Neuron(0);
+      neuronIn[i] = new Neuron(0, Width_net/4, (i+1)*Height_net/(ni+1));
     }
 
     for (int i=0; i<neuronHid.length; i++)
     {
-      neuronHid[i] = new Neuron(ni);
+      neuronHid[i] = new Neuron(ni, 2*Width_net/4, (i+1)*Height_net/(nh+1));
       neuronHid[i].linkTo(neuronIn);
     } 
 
     for (int i=0; i<neuronOut.length; i++)
     {
-      neuronOut[i] = new Neuron(nh);
+      neuronOut[i] = new Neuron(nh, 3*Width_net/4, (i+1)*Height_net/(no+1));
       neuronOut[i].linkTo(neuronHid);
     }
     
@@ -93,5 +93,17 @@ class Network {
       
     if (neuronOut[3].value > 0.5)
       car.autopilot('d');
+  }
+  
+  void Draw()
+  {
+    for (Neuron n : neuronOut)
+      n.Draw();
+    
+    for (Neuron n : neuronHid)
+      n.Draw();
+    
+    for (Neuron n : neuronIn)
+      n.Draw();
   }
 }

@@ -12,6 +12,9 @@ class Track
   float size;
   float radius;
   int N;
+  
+  int NCheckpoints = 20;
+  Checkpoint[] checks;
 
 
   Track()
@@ -40,7 +43,23 @@ class Track
       points[i] = new PVector(d*sin(theta), d*cos(theta));
       pointsIn[i] = new PVector((d-size)*sin(theta), (d-size)*cos(theta));
       pointsOut[i] = new PVector((d+size)*sin(theta), (d+size)*cos(theta));
-      
+    }
+    
+    checks = new Checkpoint[NCheckpoints];
+    for (int i=0; i<NCheckpoints; i++)
+    {
+      int index = (i+1)*floor(n/(NCheckpoints+1));
+      checks[i] = new Checkpoint(pointsIn[index],pointsOut[index]);
+      checks[i].active = (i==0);
+      checks[i].score = i+1;
+    }
+  }
+
+  void reset_checkpoints()
+  {
+    for (int i=0; i<NCheckpoints; i++)
+    {
+      checks[i].active = (i==0);
     }
   }
 
@@ -68,6 +87,9 @@ class Track
       vertex(points[i].x, points[i].y);
     endShape(CLOSE);
     strokeCap(ROUND);
+
+    for (int i=0; i<NCheckpoints; i++)
+      checks[i].Draw();
 
   }
 }

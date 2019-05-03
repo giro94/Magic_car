@@ -13,8 +13,7 @@ class Link
   }
 
   float getValue(){
-    float Value = in.value * weight; 
-    return Value;
+    return in.value * weight; 
   }
   
 

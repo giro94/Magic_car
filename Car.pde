@@ -2,17 +2,19 @@ class Car {
   float [] pos;
   float speed;
   float angle;
-  float radius = 15;
+  float radius = 10;
   float MaxSight = 600;
   float MaxSpeed = 8;
   int Nlasers = 7;
   float angle_err = PI/36;
   float[] weights;
+  Track track;
 
-  Car(float X, float Y) {
+  Car(Track t) {
+    track = t;
     pos = new float [2];
-    pos[0] = X;
-    pos[1] = Y;
+    pos[0] = t.points[0].x;
+    pos[1] = t.points[0].y;
     speed = 0;
     angle = 0;
     weights = new float[12*9+4*12];
@@ -23,20 +25,14 @@ class Car {
     //print("Costruisco car, con "+weights.length+" pesi\n");
   }
 
-  Car(PVector v) {
-    pos = new float [2];
-    pos[0] = v.x;
-    pos[1] = v.y;
+  void reset(Track t)
+  {
+    track = t;
+    pos[0] = t.points[0].x;
+    pos[1] = t.points[0].y;
     speed = 0;
     angle = 0;
-    weights = new float[12*9+4*12];
-    for (int i=0; i<weights.length; i++)
-    {
-      weights[i] = random(-1, 1);
-    }
-    
-    print("SONO STATO INVOCATOO\n ");
-  } 
+  }
 
   void autopilot(char action)
   {
@@ -104,13 +100,20 @@ class Car {
   }
 
 
-  boolean is_alive(Track track) {
-    for (PVector v : track.points) {
-      if ( dist(pos[0], pos[1], v.x, v.y) - track.size < - radius) {
-        return true;
+  boolean is_alive() {
+    for (PVector v : track.pointsIn) {
+      if ( dist(pos[0], pos[1], v.x, v.y) < radius) {
+        return false;
       }
     }
-    return false;
+
+    for (PVector v : track.pointsOut) {
+      if ( dist(pos[0], pos[1], v.x, v.y) < radius) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   float[] getSight()
@@ -156,11 +159,53 @@ class Car {
     return lasers;
   }
 
+  boolean check_cross(Checkpoint c)
+  {
+    float x1 = c.p1.x;
+    float y1 = c.p1.y;
+    float x2 = c.p2.x;
+    float y2 = c.p2.y;
+
+    float x3 = pos[0];
+    float y3 = pos[1];
+    float x4 = pos[0] + radius*cos(angle);
+    float y4 = pos[1] + radius*sin(angle);
+
+    float den = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+    if (den == 0) return false;
+
+    float t = ((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den;
+    float u = -((x1-x2)*(y1-y3)-(y1-y2)*(x1-x3))/den;
+
+    return (t>=0 && t<=1 && u>=0 && u<=1);
+  }
+
+  int has_scored()
+  {
+    for (int i=0; i<track.NCheckpoints; i++)
+    {
+      if (track.checks[i].active)
+      {
+        if (check_cross(track.checks[i]))
+        {
+          track.checks[i].active = false;
+          if (i<track.NCheckpoints-1)
+            track.checks[i+1].active = true;
+            
+          if (i == track.NCheckpoints-1)
+            return -1;
+            
+          return track.checks[i].score;
+        }
+      }
+    }
+    return 0;
+  }
 
   float[] laser_normalized() {
-    float[]laser_normalized_ = getSight();
+    float[] laser_normalized_ = getSight();
 
-    for (int i = 0; i< getSight().length; i++) {
+    for (int i = 0; i< laser_normalized_.length; i++) {
       laser_normalized_[i] /= MaxSight;
     }
     return laser_normalized_;

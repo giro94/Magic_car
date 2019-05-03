@@ -6,6 +6,7 @@ int Width_car = 800;
 int Height_car = 1000;
 int Width_net = 800;
 int Height_net = 1000;
+int gen = 0;
 
 void setup()
 {
@@ -17,11 +18,13 @@ void setup()
 void draw()
 {
   if (!replay) {
-    ai.newTrack();
+    if (gen%10 == 0)
+      ai.newTrack();
     ai.Race();
     ai.Leaderboard();
     ai.Evolve();
     ai.Mutate();
+    gen++;
     replay = true;
     score = 1;
     ai.net.getWeights(ai.cars[0]);
@@ -44,6 +47,7 @@ void draw()
     textSize(30);
     text("Score: " + (score - timer/ai.Maxtime), Width_car - 100, Height_car - 100);
     text("Time: " + timer, Width_car - 50, Height_car - 50);
+    text("Generation " + gen, 100, Height_car - 50);
     float check_score = ai.cars[0].has_scored();
     if (check_score < 0)
     {

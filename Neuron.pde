@@ -32,13 +32,12 @@ class Neuron {
     return result;
   };
 
-  float get_value() {
-
-    return sigmoid(sum_all(link));
+  void update() {
+    value = sigmoid(sum_all(link));
   }
 
-  void update() {
-    value = get_value();
+  void updateOut() {
+    value = 2*sigmoid(sum_all(link))-1;
   }
 
   void linkTo(Neuron[] neuronsIn)

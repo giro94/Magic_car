@@ -1,7 +1,7 @@
 class Network {
   int ni = 9;
   int nh = 12;
-  int no = 4;
+  int no = 2;
   Neuron[] neuronIn;
   Neuron[] neuronOut;
   Neuron[] neuronHid;
@@ -28,8 +28,6 @@ class Network {
       neuronOut[i] = new Neuron(nh, 3*Width_net/4, (i+1)*Height_net/(no+1));
       neuronOut[i].linkTo(neuronHid);
     }
-    
-    
   }
 
   void getWeights(Car car)
@@ -45,7 +43,7 @@ class Network {
       }
       neuronHid[i].setWeights(ws);
     }
-    
+
     for (int i=0; i<no; i++)
     {
       float[] ws = new float[nh];
@@ -60,65 +58,94 @@ class Network {
   void getInput(Car car)
   {
     neuronIn[0].value = 1;
-    
+
     float[] sight = car.laser_normalized();
-    
+
     for (int i=0; i<car.Nlasers; i++)
     {
       neuronIn[i+1].value = sight[i];
     }
-    
+
     neuronIn[ni-1].value = car.speed/car.MaxSpeed;
   }
-  
+
   void propagate()
   {
     for (int i=0; i<nh; i++)
       neuronHid[i].update();
-      
+
     for (int i=0; i<no; i++)
-      neuronOut[i].update();
+      neuronOut[i].updateOut();
   }
-  
+
   void drive(Car car)
   {
-    if (neuronOut[0].value > 0.5)
-      car.autopilot('w');
-    
-    if (neuronOut[1].value > 0.5)
-      car.autopilot('s');
-      
-    if (neuronOut[2].value > 0.5)
-      car.autopilot('a');
-      
-    if (neuronOut[3].value > 0.5)
-      car.autopilot('d');
+    if (no == 4)
+    {
+      if (neuronOut[0].value > 0.5)
+        car.autopilot('w');
+
+      if (neuronOut[1].value > 0.5)
+        car.autopilot('s');
+
+      if (neuronOut[2].value > 0.5)
+        car.autopilot('a');
+
+      if (neuronOut[3].value > 0.5)
+        car.autopilot('d');
+    } else if (no == 2)
+    {
+      if (neuronOut[0].value > 0.5)
+        car.autopilot('w');
+
+      if (neuronOut[0].value < -0.5)
+        car.autopilot('s');
+
+      if (neuronOut[1].value > 0.5)
+        car.autopilot('a');
+
+      if (neuronOut[1].value < -0.5)
+        car.autopilot('d');
+    }
   }
-  
+
   void Draw()
   {
     for (Neuron n : neuronOut)
       n.Draw();
-    
+
     for (Neuron n : neuronHid)
       n.Draw();
-    
+
     for (Neuron n : neuronIn)
       n.Draw();
-      
+
     textSize(35);
-    fill(0,0,255);
-    if (neuronOut[0].value > 0.5)
-      text("GAS",neuronOut[0].pos[0]+100,neuronOut[0].pos[1]);
-    
-    if (neuronOut[1].value > 0.5)
-      text("STOP",neuronOut[1].pos[0]+100,neuronOut[1].pos[1]);
-    
-    if (neuronOut[2].value > 0.5)
-      text("LEFT",neuronOut[2].pos[0]+100,neuronOut[2].pos[1]);
-    
-    if (neuronOut[3].value > 0.5)
-      text("RIGHT",neuronOut[3].pos[0]+100,neuronOut[3].pos[1]);
-    
+    fill(0, 0, 255);
+    if (no == 4)
+    {
+      if (neuronOut[0].value > 0.5)
+        text("GAS", neuronOut[0].pos[0]+100, neuronOut[0].pos[1]);
+
+      if (neuronOut[1].value > 0.5)
+        text("STOP", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
+
+      if (neuronOut[2].value > 0.5)
+        text("LEFT", neuronOut[2].pos[0]+100, neuronOut[2].pos[1]);
+
+      if (neuronOut[3].value > 0.5)
+        text("RIGHT", neuronOut[3].pos[0]+100, neuronOut[3].pos[1]);
+    } else if (no ==2)
+    {  
+      if (neuronOut[0].value > 0.5)
+        text("GAS", neuronOut[0].pos[0]+100, neuronOut[0].pos[1]);
+      else if (neuronOut[0].value < - 0.5)
+        text("STOP", neuronOut[0].pos[0]+100, neuronOut[0].pos[1]);
+
+      if (neuronOut[1].value > 0.5)
+        text("LEFT", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
+      else if (neuronOut[1].value < - 0.5)
+          text("RIGHT", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
+    }
   }
 }

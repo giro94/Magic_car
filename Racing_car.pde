@@ -20,6 +20,8 @@ void draw()
   if (!replay) {
     if (gen%10 == 0)
       ai.newTrack();
+      
+    ai.resetCars();
     ai.Race();
     ai.Leaderboard();
     ai.Evolve();

@@ -30,6 +30,12 @@ class AI
       cars[i].reset(track);
   }
 
+  void resetCars()
+  {
+    for (int i=0; i<Ncars; i++)
+      cars[i].reset(track);
+  }
+
   void Race()
   {
     for (int i=0; i<Ncars; i++)
@@ -55,8 +61,8 @@ class AI
         scores[i] += check_score;
         timer++;
       }
-      if(scores[i] >= 2)
-      scores[i] -= timer/Maxtime;
+      if (scores[i] >= 2)
+        scores[i] -= timer/Maxtime;
     }
   }
 
@@ -115,7 +121,7 @@ class AI
     cars[0].DrawSight();
     cars[0].Draw();
     popMatrix();
-    
+
     pushMatrix();
     translate(Width_car, 0);
 
@@ -124,11 +130,9 @@ class AI
 
     net.Draw();
     popMatrix();
-    
+
     //textSize(30);
     //text("Best score: " + scores[0], 100, height-100);
-    
-    
   }
 }
 

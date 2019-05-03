@@ -61,26 +61,26 @@ class AI
   void Leaderboard()
   {
     int[] ranking = Sort(scores);
-    
+
     Car[] car_copy = cars.clone();
     for (int i=0; i<Ncars; i++)
     {
       cars[i] = car_copy[ranking[i]];
     }
   }
-  
+
   void Evolve()
   {
     for (int i=Nbest; i<Nbest+Npush; i++)
     {
       cars[i].LearnFrom(cars[i%Nbest]);
     }
-    
+
     for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i+=2)
     {
       cars[i].FuckWith(cars[i+1]);
     }
-    
+
     for (int i=Nbest+Npush+Nsex; i<Ncars; i++)
     {
       cars[i].Randomize();
@@ -91,15 +91,38 @@ class AI
   {
     for (int i=Nbest; i<Ncars; i++)
     {
-      if (random(0,1)<0.1)
+      if (random(0, 1)<0.1)
       {
-        cars[i].weights[floor(random(0,cars[i].weights.length))] = random(-1,1);
+        cars[i].weights[floor(random(0, cars[i].weights.length))] = random(-1, 1);
       }
     }
   }
 
   void Draw()
   {
+    //TRACK + CAR
+    pushMatrix();
+    translate(Width_car/2, Height_car/2);
+    translate(-car_.pos[0], -car_.pos[1]);
+    //track.generateTrack(track.N);
+    track.Draw();
+    cars[0].DrawSight();
+    cars[0].Draw();
+    popMatrix();
+    
+    pushMatrix();
+    translate(Width_car, 0);
+
+    fill(200, 200, 200);
+    rect(0, 0, Width_net, Height_net);
+
+    net.Draw();
+    popMatrix();
+    
+    textSize(30);
+    text("Best score: " + scores[0], 100, height-100);
+    
+    
   }
 }
 
@@ -124,7 +147,6 @@ int[] Sort(float[] scores_)
     indexes[i] = indexes[idx];
     scores[idx] = score_temp;
     indexes[idx] = index_temp;
-    
   }
   return indexes;
 }

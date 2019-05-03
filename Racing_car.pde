@@ -1,6 +1,4 @@
-Car car_;
-Network net;
-Track track;
+AI ai;
 
 int Width_car = 800;
 int Height_car = 1000;
@@ -10,56 +8,46 @@ int Height_net = 1000;
 void setup()
 {
   size(1600, 1000);
-  track = new Track();
-  net = new Network();
-  car_ = new Car(track);
+  ai = new AI();
 }
 
 void draw()
 {
   background(255);
-
-  //TRACK + CAR
-  pushMatrix();
-  translate(Width_car/2, Height_car/2);
-  translate(-car_.pos[0], -car_.pos[1]);
-  //track.generateTrack(track.N);
-  track.Draw();
-  car_.DrawSight();
-  car_.Draw();
-  popMatrix();
+  ai.newTrack();
+  ai.Race();
+  ai.Leaderboard();
+  ai.Evolve();
+  ai.Mutate();
 
 
-  pushMatrix();
-  translate(Width_car, 0);
 
-  fill(200, 200, 200);
-  rect(0, 0, Width_net, Height_net);
+  float score = 1;
+  ai.net.getWeights(ai.cars[0]);
+  ai.track.reset_checkpoints();
 
-  net.Draw();
-  popMatrix();
-  //////
-  car_.Move();
-  car_.commands();
-  net.getInput(car_);
-  net.propagate();
-  net.drive(car_);
-  car_.has_scored();
-
-  fill(0);
-  if (!car_.is_alive())
+  float timer = 0;
+  while (ai.cars[0].is_alive() && timer < ai.Maxtime)
   {
-    track.generateTrack(track.N);
-    //float speed_temp = car_.speed;
-    car_ = new Car(track);
-    //car_.speed = speed_temp;
-    net.getWeights(car_);
+    ai.net.getInput(ai.cars[0]);
+    ai.net.propagate();
+    ai.net.drive(ai.cars[0]);
+    ai.cars[0].Move();
+    ai.Draw();
+    fill(0);
+    textSize(30);
+    text("Score: " + (score - timer/ai.Maxtime), Width_car - 100, Height_car - 100);
+    text("Time: " + timer, Width_car - 50, Height_car - 50);
+    float check_score = ai.cars[0].has_scored();
+    if (check_score < 0)
+    {
+      score += 100;
+      break;
+    }
+    score += check_score;
+    timer++;
   }
-}
+ 
 
-void mousePressed()
-{
-  track.generateTrack(track.N);
-  car_ = new Car(track);
-  ellipse(10, 10, 10, 10);
+  
 }

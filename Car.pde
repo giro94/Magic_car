@@ -20,7 +20,7 @@ class Car {
     {
       weights[i] = random(-1, 1);
     }
-    print("Costruisco car, con "+weights.length+" pesi\n");
+    //print("Costruisco car, con "+weights.length+" pesi\n");
   }
 
   Car(PVector v) {
@@ -34,6 +34,8 @@ class Car {
     {
       weights[i] = random(-1, 1);
     }
+    
+    print("SONO STATO INVOCATOO\n ");
   } 
 
   void autopilot(char action)
@@ -156,18 +158,13 @@ class Car {
 
 
   float[] laser_normalized() {
-    float[]laser_normalized_ = new float[Nlasers];
+    float[]laser_normalized_ = getSight();
 
     for (int i = 0; i< getSight().length; i++) {
-      laser_normalized_[i] = getSight()[i] / MaxSight;
+      laser_normalized_[i] /= MaxSight;
     }
     return laser_normalized_;
   }
-
-
-
-
-
 
 
   void DrawSight()

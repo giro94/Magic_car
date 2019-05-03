@@ -35,7 +35,7 @@ class Network {
   void getWeights(Car car)
   {
     //print(car.weights.length);
-    print("getWeights, car has "+car.weights.length+" weights\n");
+    //print("getWeights, car has "+car.weights.length+" weights\n");
     for (int i=0; i<nh; i++)
     {
       float[] ws = new float[ni];

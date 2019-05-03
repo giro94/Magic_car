@@ -7,6 +7,7 @@ int Height_car = 1000;
 int Width_net = 800;
 int Height_net = 1000;
 int gen = 0;
+int gens_per_track = 200;
 
 void setup()
 {
@@ -18,7 +19,7 @@ void setup()
 void draw()
 {
   if (!replay) {
-    if (gen%10 == 0)
+    if (gen%gens_per_track == 0)
       ai.newTrack();
       
     ai.resetCars();

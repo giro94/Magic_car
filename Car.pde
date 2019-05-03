@@ -191,10 +191,10 @@ class Car {
           track.checks[i].active = false;
           if (i<track.NCheckpoints-1)
             track.checks[i+1].active = true;
-            
+
           if (i == track.NCheckpoints-1)
             return -1;
-            
+
           return track.checks[i].score;
         }
       }
@@ -225,6 +225,31 @@ class Car {
       fill(0, 255, 255);
       noStroke();
       ellipse(dot.x, dot.y, 6, 6);
+    }
+  }
+
+  void LearnFrom(Car c)
+  {
+    for (int i=0; i<weights.length; i++)
+      weights[i] += 0.1*(c.weights[i]-weights[i]);
+  }
+
+  void FuckWith(Car c)
+  {
+    int idx = floor(random(0, weights.length));
+    for (int i = idx; i<weights.length; i++)
+    {
+      float temp = weights[i];
+      weights[i] = c.weights[i];
+      c.weights[i] = temp;
+    }
+  }
+
+  void Randomize()
+  {
+    for (int i=0; i<weights.length; i++)
+    {
+      weights[i] = random(-1, 1);
     }
   }
 }

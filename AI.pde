@@ -6,6 +6,9 @@ class AI
   Track track;
   Network net;
   int Maxtime = 600;
+  int Nbest = 5;
+  int Nsex = 40;
+  int Npush = 40;
 
   AI()
   {
@@ -57,7 +60,42 @@ class AI
 
   void Leaderboard()
   {
-    float[] ranking = Sort(scores);
+    int[] ranking = Sort(scores);
+    
+    Car[] car_copy = cars.clone();
+    for (int i=0; i<Ncars; i++)
+    {
+      cars[i] = car_copy[ranking[i]];
+    }
+  }
+  
+  void Evolve()
+  {
+    for (int i=Nbest; i<Nbest+Npush; i++)
+    {
+      cars[i].LearnFrom(cars[i%Nbest]);
+    }
+    
+    for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i+=2)
+    {
+      cars[i].FuckWith(cars[i+1]);
+    }
+    
+    for (int i=Nbest+Npush+Nsex; i<Ncars; i++)
+    {
+      cars[i].Randomize();
+    }
+  }
+
+  void Mutate()
+  {
+    for (int i=Nbest; i<Ncars; i++)
+    {
+      if (random(0,1)<0.1)
+      {
+        cars[i].weights[floor(random(0,cars[i].weights.length))] = random(-1,1);
+      }
+    }
   }
 
   void Draw()
@@ -66,10 +104,10 @@ class AI
 }
 
 
-float[] Sort(float[] scores_)
+int[] Sort(float[] scores_)
 {
   float[] scores = new float[scores_.length];
-  float[] indexes = new float[scores_.length];
+  int[] indexes = new int[scores_.length];
   for (int i=0; i<scores_.length; i++)
   {
     indexes[i] = i;
@@ -81,7 +119,7 @@ float[] Sort(float[] scores_)
     int idx = find_max(scores, i, scores.length);
 
     float score_temp = scores[i];
-    float index_temp = indexes[i];
+    int index_temp = indexes[i];
     scores[i] = scores[idx];
     indexes[i] = indexes[idx];
     scores[idx] = score_temp;

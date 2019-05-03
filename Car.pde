@@ -9,6 +9,13 @@ class Car {
   float angle_err = PI/36;
   float[] weights;
   Track track;
+  
+  PVector pos_prev1;
+  PVector pos_prev2;
+  PVector vel_prev1;
+  PVector vel_prev2;
+  
+  
 
   Car(Track t) {
     track = t;
@@ -23,6 +30,10 @@ class Car {
       weights[i] = random(-1, 1);
     }
     //print("Costruisco car, con "+weights.length+" pesi\n");
+    pos_prev1 = new PVector(0,0);
+    pos_prev2 = new PVector(0,0);
+    vel_prev1 = new PVector(0,0);
+    vel_prev2 = new PVector(0,0);
   }
 
   void reset(Track t)
@@ -80,6 +91,16 @@ class Car {
   }
 
   void Move() {
+    pos_prev2.x = pos_prev1.x;
+    pos_prev2.y = pos_prev1.y;
+    pos_prev1.x = pos[0];
+    pos_prev1.y = pos[1];
+    vel_prev2.x = vel_prev1.x;
+    vel_prev2.y = vel_prev1.y;
+    vel_prev1.x = speed;
+    vel_prev1.y = angle;
+    
+    
     pos[0] = pos[0] + speed * cos(angle);
     pos[1] = pos[1] + speed * sin(angle);
   }
@@ -101,6 +122,18 @@ class Car {
 
 
   boolean is_alive() {
+    
+    if (pos[0] == pos_prev1.x && pos[1] == pos_prev1.y)
+    {
+      if (speed == vel_prev1.x && angle == vel_prev1.y)
+      {
+        if (pos_prev1 == pos_prev2 && vel_prev1 == vel_prev2)
+        {
+          return false;
+        }
+      }
+    }
+    
     for (PVector v : track.pointsIn) {
       if ( dist(pos[0], pos[1], v.x, v.y) < radius) {
         return false;

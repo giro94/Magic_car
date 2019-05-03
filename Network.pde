@@ -106,19 +106,19 @@ class Network {
     for (Neuron n : neuronIn)
       n.Draw();
       
-    textSize(50);
-    fill(255,0,0);
+    textSize(35);
+    fill(0,0,255);
     if (neuronOut[0].value > 0.5)
-      text("GAS",neuronOut[0].pos[0],neuronOut[0].pos[1]);
+      text("GAS",neuronOut[0].pos[0]+50,neuronOut[0].pos[1]);
     
     if (neuronOut[1].value > 0.5)
-      text("STOP",neuronOut[1].pos[0],neuronOut[1].pos[1]);
+      text("STOP",neuronOut[1].pos[0]+50,neuronOut[1].pos[1]);
     
     if (neuronOut[2].value > 0.5)
-      text("LEFT",neuronOut[2].pos[0],neuronOut[2].pos[1]);
+      text("LEFT",neuronOut[2].pos[0]+50,neuronOut[2].pos[1]);
     
     if (neuronOut[3].value > 0.5)
-      text("RIGHT",neuronOut[3].pos[0],neuronOut[3].pos[1]);
+      text("RIGHT",neuronOut[3].pos[0]+50,neuronOut[3].pos[1]);
     
   }
 }

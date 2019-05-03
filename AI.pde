@@ -120,8 +120,8 @@ class AI
     net.Draw();
     popMatrix();
     
-    textSize(30);
-    text("Best score: " + scores[0], 100, height-100);
+    //textSize(30);
+    //text("Best score: " + scores[0], 100, height-100);
     
     
   }

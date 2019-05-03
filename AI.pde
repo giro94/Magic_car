@@ -78,6 +78,11 @@ class AI
       cars[i].LearnFrom(cars[i%Nbest]);
     }
 
+    for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i++)
+    {
+      cars[i].CopyFrom(cars[i%Nbest]);
+    }
+
     for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i+=2)
     {
       cars[i].FuckWith(cars[i+1]);

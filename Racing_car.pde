@@ -46,7 +46,7 @@ void draw()
     fill(0);
     textSize(30);
     text("Score: " + (score - timer/ai.Maxtime), Width_car - 100, Height_car - 100);
-    text("Time: " + timer, Width_car - 50, Height_car - 50);
+    text("Time: " + timer, Width_car - 100, Height_car - 50);
     text("Generation " + gen, 100, Height_car - 50);
     float check_score = ai.cars[0].has_scored();
     if (check_score < 0)

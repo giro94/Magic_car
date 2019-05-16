@@ -8,6 +8,7 @@ class Car {
   int Nlasers = 7;
   float angle_err = PI/36;
   float[] weights;
+  float MaxWeight = 5;
   Track track;
   float learning_step = 0.6;
 
@@ -289,7 +290,7 @@ class Car {
   {
     for (int i=0; i<weights.length; i++)
     {
-      weights[i] = random(-5, 5);
+      weights[i] = random(-MaxWeight, MaxWeight);
     }
   }
 }

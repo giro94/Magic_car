@@ -79,6 +79,7 @@ class AI
 
   void Evolve()
   {
+    /*
     for (int i=Nbest; i<Nbest+Npush; i++)
     {
       cars[i].LearnFrom(cars[i%Nbest]);
@@ -98,6 +99,13 @@ class AI
     {
       cars[i].Randomize();
     }
+    */
+       
+    for (int i=Nbest; i<Ncars; i++)
+    {
+      cars[i].CopyFrom(cars[i%Nbest]);
+    }
+    
   }
 
   void Mutate()
@@ -106,7 +114,7 @@ class AI
     {
       if (random(0, 1)<0.1)
       {
-        cars[i].weights[floor(random(0, cars[i].weights.length))] = random(-1, 1);
+        cars[i].weights[floor(random(0, cars[i].weights.length))] = random(-cars[i].MaxWeight, cars[i].MaxWeight);
       }
     }
   }

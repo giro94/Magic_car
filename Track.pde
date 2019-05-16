@@ -21,7 +21,7 @@ class Track
   {
     N = 2000;
     radius = 400;
-    size = 40;
+    size = 50;
     generateTrack(N);
   }
 

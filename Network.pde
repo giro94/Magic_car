@@ -57,7 +57,7 @@ class Network {
 
   void getInput(Car car)
   {
-    neuronIn[0].value = 1;
+    neuronIn[0].value = 0.2;
 
     float[] sight = car.laser_normalized();
 

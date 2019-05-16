@@ -3,7 +3,7 @@ class Car {
   float speed;
   float angle;
   float radius = 10;
-  float MaxSight = 600;
+  float MaxSight = 100;
   float MaxSpeed = 8;
   int Nlasers = 7;
   float angle_err = PI/36;
@@ -26,10 +26,7 @@ class Car {
     speed = 0;
     angle = 0;
     weights = new float[12*9+4*12];
-    for (int i=0; i<weights.length; i++)
-    {
-      weights[i] = random(-1, 1);
-    }
+    Randomize();
     //print("Costruisco car, con "+weights.length+" pesi\n");
     pos_prev1 = new PVector(0, 0);
     pos_prev2 = new PVector(0, 0);
@@ -190,7 +187,7 @@ class Car {
         lasers[l] = min(dists);
       } else
       {
-        lasers[l] = track.size;
+        lasers[l] = MaxSight;
       }
     }
     return lasers;
@@ -292,7 +289,7 @@ class Car {
   {
     for (int i=0; i<weights.length; i++)
     {
-      weights[i] = random(-1, 1);
+      weights[i] = random(-5, 5);
     }
   }
 }

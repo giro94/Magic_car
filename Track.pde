@@ -13,7 +13,7 @@ class Track
   float radius;
   int N;
   
-  int NCheckpoints = 50;
+  int NCheckpoints = 100;
   Checkpoint[] checks;
 
 

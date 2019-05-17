@@ -1,6 +1,6 @@
 class Network {
   int ni = 9;
-  int nh = 12;
+  int nh = 7;
   int no = 2;
   Neuron[] neuronIn;
   Neuron[] neuronOut;

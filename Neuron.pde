@@ -17,8 +17,7 @@ class Neuron {
   }
 
   float sigmoid(float x) {
-    float f_sigmoid = 1/(1+exp(-x));
-    return f_sigmoid;
+    return 1./(1+exp(-x));
   };
 
   float sum_all(Link [] links) {

@@ -17,6 +17,8 @@ class Car {
   PVector vel_prev1;
   PVector vel_prev2;
 
+  PVector[] tail;
+  int ntail = 20;
 
 
   Car(Track t) {
@@ -33,6 +35,10 @@ class Car {
     pos_prev2 = new PVector(0, 0);
     vel_prev1 = new PVector(0, 0);
     vel_prev2 = new PVector(0, 0);
+
+    tail = new PVector[ntail];
+    for (int i=0; i<ntail; i++)
+      tail[i] = new PVector(pos[0], pos[1]);
   }
 
   void reset(Track t)
@@ -42,6 +48,8 @@ class Car {
     pos[1] = t.points[0].y;
     speed = 0;
     angle = 0;
+    for (int i=0; i<ntail; i++)
+      tail[i] = new PVector(pos[0], pos[1]);
   }
 
   void autopilot(char action)
@@ -102,16 +110,47 @@ class Car {
 
     pos[0] = pos[0] + speed * cos(angle);
     pos[1] = pos[1] + speed * sin(angle);
+
+    for (int i = ntail-1; i>0; i--)
+    {
+      tail[i].x = tail[i-1].x;
+      tail[i].y = tail[i-1].y;
+    }
+    tail[0].x = pos[0];
+    tail[0].y = pos[1];
   }
 
 
 
   void Draw() {
-    stroke(0, 255, 0);
-    line(pos[0], pos[1], pos[0] + 10*speed * cos(angle), pos[1] + 10*speed * sin(angle));
+    rectMode(CENTER);
+    //translate(-pos[0],-pos[1]);
+    //stroke(0, 255, 0);
+    //line(0,0,10*speed,0);
+
+    for (int i=0; i<ntail-1; i++)
+    {
+      stroke(255, 100, 50, 255*(1-float(i)/ntail));
+      strokeWeight( 5*(1-float(i)/ntail));
+      line(tail[i].x, tail[i].y, tail[i+1].x, tail[i+1].y);
+    }
+
+
+    pushMatrix();
+    translate(pos[0], pos[1]);
+    rotate(angle);
+
     noStroke();
     fill(255, 0, 0);
-    ellipse(pos[0], pos[1], 2*radius, 2*radius);
+    rect(0, 0, 2*radius, radius);
+    fill(100);
+    ellipse(0.5*radius,0.5*radius,6,4);
+    ellipse(0.5*radius,-0.5*radius,6,4);
+    ellipse(-0.5*radius,0.5*radius,6,4);
+    ellipse(-0.5*radius,-0.5*radius,6,4);
+
+    popMatrix();
+    rectMode(CORNER);
   }
 
   float distSq(float x1, float y1, float x2, float y2) {
@@ -196,10 +235,15 @@ class Car {
 
   boolean check_cross(Checkpoint c)
   {
-    float x1 = c.p1.x;
-    float y1 = c.p1.y;
-    float x2 = c.p2.x;
-    float y2 = c.p2.y;
+    return check_cross(c.p1, c.p2);
+  }
+
+  boolean check_cross(PVector p1, PVector p2)
+  {
+    float x1 = p1.x;
+    float y1 = p1.y;
+    float x2 = p2.x;
+    float y2 = p2.y;
 
     float x3 = pos[0];
     float y3 = pos[1];
@@ -256,10 +300,15 @@ class Car {
       angles[i] = angle + 0.5*PI - i*(PI/(Nlasers-1));
       PVector dot = new PVector(pos[0]+lasers[i]*cos(angles[i]), pos[1]+lasers[i]*sin(angles[i]));
       stroke(0, 0, 255);
+      strokeWeight(2);
       line(pos[0], pos[1], dot.x, dot.y);
-      fill(0, 255, 255);
-      noStroke();
-      ellipse(dot.x, dot.y, 6, 6);
+
+      if (lasers[i] < MaxSight)
+      {
+        fill(0, 255, 255);
+        noStroke();
+        ellipse(dot.x, dot.y, 6, 6);
+      }
     }
   }
 

@@ -51,7 +51,7 @@ class Track
       int index = (i+1)*floor(n/(NCheckpoints+1));
       checks[i] = new Checkpoint(pointsIn[index],pointsOut[index]);
       checks[i].active = (i==0);
-      checks[i].score = i+1;
+      checks[i].score = 1;
     }
   }
 

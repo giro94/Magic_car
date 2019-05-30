@@ -144,10 +144,10 @@ class Car {
     fill(255, 0, 0);
     rect(0, 0, 2*radius, radius);
     fill(100);
-    ellipse(0.5*radius,0.5*radius,6,4);
-    ellipse(0.5*radius,-0.5*radius,6,4);
-    ellipse(-0.5*radius,0.5*radius,6,4);
-    ellipse(-0.5*radius,-0.5*radius,6,4);
+    ellipse(0.5*radius, 0.5*radius, 6, 4);
+    ellipse(0.5*radius, -0.5*radius, 6, 4);
+    ellipse(-0.5*radius, 0.5*radius, 6, 4);
+    ellipse(-0.5*radius, -0.5*radius, 6, 4);
 
     popMatrix();
     rectMode(CORNER);
@@ -190,6 +190,7 @@ class Car {
     return true;
   }
 
+/*
   float[] getSight()
   {
     float[] lasers = new float[Nlasers];
@@ -232,6 +233,37 @@ class Car {
     }
     return lasers;
   }
+*/
+
+  float[] getSight()
+  {
+    float[] lasers = new float[Nlasers];
+    PVector carpos = new PVector(pos[0], pos[1]);
+    PVector laspos = new PVector(pos[0], pos[1]);
+    for (int l=0; l<Nlasers; l++)
+    {
+      lasers[l] = MaxSight;
+
+      float langle = angle + 0.5*PI - l*(PI/(Nlasers-1));
+      laspos.x = carpos.x + MaxSight*cos(langle);
+      laspos.y = carpos.y + MaxSight*sin(langle);
+      for (int p=0; p<track.N-1; p++)
+      {
+        PVector pt1 = track.pointsIn[p];
+        PVector pt2 = track.pointsIn[p+1];
+        float ldist = MaxSight*check_cross(carpos, laspos, pt1, pt2);
+        if (ldist >= 0 && ldist < lasers[l])
+          lasers[l] = ldist;
+      
+        pt1 = track.pointsOut[p];
+        pt2 = track.pointsOut[p+1];
+        ldist = MaxSight*check_cross(carpos, laspos, pt1, pt2);
+        if (ldist >= 0 && ldist < lasers[l])
+          lasers[l] = ldist;
+      }
+    }
+    return lasers;
+  }
 
   boolean check_cross(Checkpoint c)
   {
@@ -257,6 +289,30 @@ class Car {
     float u = -((x1-x2)*(y1-y3)-(y1-y2)*(x1-x3))/den;
 
     return (t>=0 && t<=1 && u>=0 && u<=1);
+  }
+
+  float check_cross(PVector l1, PVector l2, PVector p1, PVector p2)
+  {
+    float x1 = p1.x;
+    float y1 = p1.y;
+    float x2 = p2.x;
+    float y2 = p2.y;
+
+    float x3 = l1.x;
+    float y3 = l1.y;
+    float x4 = l2.x;
+    float y4 = l2.y;
+
+    float den = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+    if (den == 0) return -1;
+
+    float t = ((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den;
+    float u = -((x1-x2)*(y1-y3)-(y1-y2)*(x1-x3))/den;
+
+    if (t>=0 && t<=1 && u>=0)
+      return u;
+    else
+      return -1;
   }
 
   int has_scored()

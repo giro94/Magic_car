@@ -1,6 +1,6 @@
 class AI
 {
-  int Ncars = 100;
+  int Ncars = 500;
   Car[] cars;
   float[] scores;
   Track track;

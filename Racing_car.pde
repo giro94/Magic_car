@@ -3,15 +3,17 @@ boolean replay;
 float timer;
 float score;
 int Width_car = 800;
-int Height_car = 1000;
+int Height_car = 700;
 int Width_net = 800;
-int Height_net = 1000;
-int gen = 0;
-int gens_per_track = 200;
+int Height_net = 700;
+int Width_graph = 1600;
+int Height_graph = 200;
+
+
 
 void setup()
 {
-  size(1600, 1000);
+  size(1600, 900);
   ai = new AI();
   replay = false;
 }
@@ -19,7 +21,7 @@ void setup()
 void draw()
 {
   if (!replay) {
-    if (gen%gens_per_track == 0)
+    if (ai.gen % ai.gens_per_track == 0)
       ai.newTrack();
       
     ai.resetCars();
@@ -27,7 +29,8 @@ void draw()
     ai.Leaderboard();
     ai.Evolve();
     ai.Mutate();
-    gen++;
+    ai.gen++;
+
     replay = true;
     score = 1;
     ai.net.getWeights(ai.cars[0]);
@@ -53,7 +56,7 @@ void draw()
     text("Time: " + timer, Width_car, Height_car - 50);
     text("FPS " + int(frameRate), Width_car, 50);
     textAlign(LEFT);
-    text("Generation " + gen, 0, Height_car - 50);
+    text("Generation " + ai.gen, 0, Height_car - 50);
     
     float check_score = ai.cars[0].has_scored();
     if (check_score < 0)

@@ -5,7 +5,8 @@ class Network {
   Neuron[] neuronIn;
   Neuron[] neuronOut;
   Neuron[] neuronHid;
-
+  float bias_value = 1;
+  
   Network()
   {
     neuronIn = new Neuron[ni];
@@ -57,7 +58,7 @@ class Network {
 
   void getInput(Car car)
   {
-    neuronIn[0].value = 0.2;
+    neuronIn[0].value = bias_value;
 
     float[] sight = car.laser_normalized();
 
@@ -100,12 +101,21 @@ class Network {
 
       if (neuronOut[0].value < -0.5)
         car.autopilot('s');
-
+      
+      /*
       if (neuronOut[1].value > 0.5)
-        car.autopilot('a');
+        car.angle -= 0.1*neuronOut[1].value;
 
       if (neuronOut[1].value < -0.5)
-        car.autopilot('d');
+        car.angle += 0.1*neuronOut[1].value;
+      */
+      
+      if (neuronOut[1].value > 0.5)
+       car.autopilot('a');
+       
+       if (neuronOut[1].value < -0.5)
+       car.autopilot('d');
+       
     }
   }
 
@@ -145,7 +155,7 @@ class Network {
       if (neuronOut[1].value > 0.5)
         text("LEFT", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
       else if (neuronOut[1].value < - 0.5)
-          text("RIGHT", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
+        text("RIGHT", neuronOut[1].pos[0]+100, neuronOut[1].pos[1]);
     }
   }
 }

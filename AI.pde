@@ -6,15 +6,19 @@ class AI
   Track track;
   Network net;
   int Maxtime = 600;
-  int Nbest = 5;
+  int Nbest = 25;
   int Nsex = 40;
   int Npush = 40;
+  int gen = 0;
+  int gens_per_track = 200;
+  ArrayList<float[]> allscores;
 
   AI()
   {
     track = new Track();
     cars = new Car[Ncars];
     scores = new float[Ncars];
+    allscores = new ArrayList<float[]>();
     for (int i=0; i<Ncars; i++)
     {
       cars[i] = new Car(track);
@@ -59,8 +63,9 @@ class AI
           break;
         }
         scores[i] += check_score;
+        //scores[i] += 0.01*cars[i].speed;
         timer++;
-      }
+      }      
       if (scores[i] >= 2)
         scores[i] -= timer/Maxtime;
     }
@@ -71,50 +76,58 @@ class AI
     int[] ranking = Sort(scores);
 
     Car[] car_copy = cars.clone();
+    float[] scores_ord = new float [Ncars];
     for (int i=0; i<Ncars; i++)
     {
       cars[i] = car_copy[ranking[i]];
+      scores_ord[i] = scores[ranking[i]];
     }
+
+    allscores.add(scores_ord);
   }
 
   void Evolve()
   {
     /*
     for (int i=Nbest; i<Nbest+Npush; i++)
-    {
-      cars[i].LearnFrom(cars[i%Nbest]);
-    }
+     {
+     cars[i].LearnFrom(cars[i%Nbest]);
+     }
+     
+     for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i++)
+     {
+     cars[i].CopyFrom(cars[i%Nbest]);
+     }
+     
+     for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i+=2)
+     {
+     cars[i].FuckWith(cars[i+1]);
+     }
+     
+     for (int i=Nbest+Npush+Nsex; i<Ncars; i++)
+     {
+     cars[i].Randomize();
+     }
+     */
 
-    for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i++)
-    {
-      cars[i].CopyFrom(cars[i%Nbest]);
-    }
-
-    for (int i=Nbest+Npush; i<Nbest+Npush+Nsex; i+=2)
-    {
-      cars[i].FuckWith(cars[i+1]);
-    }
-
-    for (int i=Nbest+Npush+Nsex; i<Ncars; i++)
-    {
-      cars[i].Randomize();
-    }
-    */
-       
     for (int i=Nbest; i<Ncars; i++)
     {
       cars[i].CopyFrom(cars[i%Nbest]);
     }
-    
   }
 
   void Mutate()
   {
     for (int i=Nbest; i<Ncars; i++)
     {
-      if (random(0, 1)<0.1)
+      int n_weights = cars[i].weights.length;
+      float percentage = map(i,Nbest,Ncars,0.01,1);
+      for (int j=0; j<n_weights; j++)
       {
-        cars[i].weights[floor(random(0, cars[i].weights.length))] = random(-cars[i].MaxWeight, cars[i].MaxWeight);
+        if (random(0, 1) < percentage) //From 1% to 100%
+        {
+          cars[i].weights[j] = random(-cars[i].MaxWeight, cars[i].MaxWeight);
+        }
       }
     }
   }
@@ -139,8 +152,79 @@ class AI
     net.Draw();
     popMatrix();
 
+    pushMatrix();
+    translate(0, Height_car);
+    DrawGraph();
+    popMatrix();
+
     //textSize(30);
     //text("Best score: " + scores[0], 100, height-100);
+  }
+
+  void DrawGraph()
+  {
+    stroke(0);
+    strokeWeight(1);
+    fill(51);
+    rect(0, 0, Width_graph, Height_graph);
+    fill(101);
+    rect(0.05*Width_graph, 0.05*Height_graph, 0.9*Width_graph, 0.9*Height_graph);
+    float maxscore = allscores.get(gen-1)[0];
+    float dx = 0.9*Width_graph/gen;
+    float dy = 0.9*Height_graph/maxscore;
+    int Ylines = 9;
+    int Xlines = 10;
+
+    //Draw Y axis
+    for (int i=0; i<Ylines; i++)
+    {
+      stroke(51);
+      float h = 0.95*Height_graph - i*0.9*Height_graph/(Ylines-1);
+      line(0.05*Width_graph, h, 0.95*Width_graph, h);
+      textSize(10);
+      textAlign(CENTER, CENTER);
+      fill(255);
+      text(nf(i*maxscore/(Ylines-1), 3, 2), 0.025*Width_graph, h);
+      fill(0, 255, 0);
+      if (gen>0)
+        text(allscores.get(gen-1)[0], 0.975*Width_graph, 0.95*Height_graph-dy*allscores.get(gen-1)[0]);
+      fill(255, 0, 0);
+      if (gen>0)
+        text(allscores.get(gen-1)[5*((Ncars-1)/10)], 0.975*Width_graph, 0.95*Height_graph-dy*allscores.get(gen-1)[5*((Ncars-1)/10)]);
+    }
+
+    //Draw X axis
+    for (int i=0; i<Xlines; i++)
+    {
+      stroke(51);
+      float X = 0.05*Width_graph + i*0.9*Width_graph/(Xlines-1);
+      line(X, 0.05*Height_graph, X, 0.95*Height_graph);
+      textSize(10);
+      textAlign(CENTER, CENTER);
+      fill(255);
+      text(round(i*gen/(Xlines-1)), X, 0.975*Height_graph);
+    }
+
+    //Draw graphs
+    int Ngraphs = 101; //odd number here pls
+    for (int i=0; i<Ngraphs; i++)
+    {
+      int index = i*((Ncars-1)/(Ngraphs-1));
+      if (i==0)
+        stroke(0, 255, 0);
+      else if (i==(Ngraphs-1)/2)
+        stroke(255, 0, 0);
+      else 
+      stroke(0, 0, 255);
+
+      for (int j=0; j<gen; j++)
+      {
+        if (j==0)
+          line(0.05*Width_graph, 0.95*Height_graph, 0.05*Width_graph+dx, 0.95*Height_graph-dy*allscores.get(j)[index]);
+        else
+          line(0.05*Width_graph + j*dx, 0.95*Height_graph-dy*allscores.get(j-1)[index], 0.05*Width_graph+(j+1)*dx, 0.95*Height_graph-dy*allscores.get(j)[index]);
+      }
+    }
   }
 }
 
